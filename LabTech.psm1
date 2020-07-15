@@ -838,7 +838,8 @@ Function Uninstall-LTService{
                         #Run $UninstallEXE
                         Write-Verbose "Launching Agent Uninstaller"
                         Write-Debug "Line $(LINENUM): Executing Command ""$UninstallBase\$UninstallEXE"""
-                        Start-Process -Wait -FilePath "$UninstallBase\$UninstallEXE" -WorkingDirectory $UninstallBase
+                        #Avoid issue #51 where Agent_Uninstall.exe hangs when executed PSRemote by using a timeout
+                        Start-Process -PassThru -FilePath "$UninstallBase\$UninstallEXE" -WorkingDirectory $UninstallBase | Wait-Process -Timeout 300
                         Start-Sleep -Seconds 5
                     } Else {
                         Write-Verbose "WARNING: $UninstallBase\$UninstallEXE was not found."
